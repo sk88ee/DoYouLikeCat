@@ -20,13 +20,24 @@ class CatStore {
   }
 
   async addBookmark({ id, url }) {
-    this.bookmarkedList.push(url);
+    runInAction(() => {
+      if (
+        !this.bookmarkedList.find((item) => {
+          return item[0] === id;
+        })
+      ) {
+        this.bookmarkedList.push([id, url]);
+      }
+    });
+
     await Storage.setData('SaveList', this.bookmarkedList);
   }
 
   async removeBookmark(item) {
-    this.bookmarkedList = this.bookmarkedList.filter((value) => {
-      return value !== item;
+    runInAction(() => {
+      this.bookmarkedList = this.bookmarkedList.filter((value) => {
+        return value !== item;
+      });
     });
     await Storage.setData('SaveList', this.bookmarkedList);
   }

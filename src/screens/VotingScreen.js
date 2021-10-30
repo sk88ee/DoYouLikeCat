@@ -19,16 +19,14 @@ const VotingScreen = ({ componentId }) => {
 
   return (
     <Wrapper>
-      <ScrollView>
-        <Header>
-          <Title>Do you like cat ?</Title>
-          <BookMarkButton
-            onPress={() => showBookmarkList()}
-            icon={<BookMarkIcon source={require('@assets/bookmark_icon.png')} />}
-          />
-        </Header>
-        <CatVoting componentId={componentId} />
-      </ScrollView>
+      <Header>
+        <Title>Do you like cat ?</Title>
+        <BookMarkButton
+          onPress={() => showBookmarkList()}
+          icon={<BookMarkIcon source={require('@assets/bookmark_icon.png')} />}
+        />
+      </Header>
+      <CatVoting componentId={componentId} />
     </Wrapper>
   );
 };
@@ -38,8 +36,6 @@ const Wrapper = styled(SafeAreaView)`
   margin-left: 25px;
   margin-right: 25px;
 `;
-
-const ScrollView = styled.ScrollView``;
 
 const Header = styled.View`
   flex-direction: row;

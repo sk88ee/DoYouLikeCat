@@ -1,45 +1,68 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from 'mobx-react';
 import styled from 'styled-components/native';
 import { useStores } from '@stores/index';
 import { Button } from 'react-native-elements';
-
-const DEVICE_HALF_WIDTH = Dimensions.get('window').width / 2.5;
+import { set } from 'mobx';
 
 const CatVoting = ({ componentId }) => {
   const { catStore } = useStores();
-  const { id, url } = catStore?.cat;
+  const { id, url } = catStore.cat;
+  const [loadSuccess, setImageLoaded] = useState(false);
+
+  const [deviceHalfWidth, setDeviceHalfWidth] = useState(Dimensions.get('window').width / 2.5);
 
   useEffect(() => {
-    async function getRandomCat() {
-      await catStore.getRandomCat();
-    }
-    getRandomCat();
+    catStore.getRandomCat();
   }, []);
 
-  const LikeButtonCliked = async () => {
-    await catStore.addBookmark({ id: id, url: url });
-    await catStore.getRandomCat();
+  useEffect(() => {
+    const updateLayout = () => {
+      setDeviceHalfWidth(Dimensions.get('window').width / 2.5);
+    };
+    const subscription = Dimensions.addEventListener('change', updateLayout);
+
+    return () => {
+      subscription.remove();
+    };
+  });
+
+  const onImageLoadSuccess = () => {
+    setImageLoaded(true);
   };
 
-  const NotLikeButtonClicked = async () => {
-    await catStore.getRandomCat();
+  const LikeButtonCliked = () => {
+    if (loadSuccess) {
+      catStore.addBookmark({ id: id, url: url });
+      catStore.getRandomCat();
+      setImageLoaded(false);
+    }
+  };
+
+  const NotLikeButtonClicked = () => {
+    if (loadSuccess) {
+      catStore.getRandomCat();
+      setImageLoaded(false);
+    }
   };
 
   return (
     <Wrapper>
-      <CatImage source={{ uri: url }} />
+      <CatImage source={{ uri: url }} onLoad={() => onImageLoadSuccess()} />
       <ButtonSection>
-        <LikeButton title="Like" onPress={() => LikeButtonCliked()} />
-        <NotLikeButton title="Not Like" onPress={() => NotLikeButtonClicked()} />
+        <LikeButton title="Like" deviceWidth={deviceHalfWidth} onPress={() => LikeButtonCliked()} />
+        <NotLikeButton
+          title="Not Like"
+          deviceWidth={deviceHalfWidth}
+          onPress={() => NotLikeButtonClicked()}
+        />
       </ButtonSection>
     </Wrapper>
   );
 };
 
-const Wrapper = styled(SafeAreaView)``;
+const Wrapper = styled.View``;
 
 const CatImage = styled.Image`
   height: 300px;
@@ -52,9 +75,9 @@ const ButtonSection = styled.View`
   justify-content: space-between;
 `;
 
-const LikeButton = styled(Button).attrs({
+const LikeButton = styled(Button).attrs((props) => ({
   buttonStyle: {
-    width: DEVICE_HALF_WIDTH,
+    width: props.deviceWidth,
     height: 50,
     borderRadius: 4,
     backgroundColor: 'blue',
@@ -62,11 +85,11 @@ const LikeButton = styled(Button).attrs({
   titleStyle: {
     color: 'white',
   },
-})``;
+}))``;
 
-const NotLikeButton = styled(Button).attrs({
+const NotLikeButton = styled(Button).attrs((props) => ({
   buttonStyle: {
-    width: DEVICE_HALF_WIDTH,
+    width: props.deviceWidth,
     height: 50,
     borderRadius: 4,
     backgroundColor: 'red',
@@ -74,6 +97,6 @@ const NotLikeButton = styled(Button).attrs({
   titleStyle: {
     color: 'white',
   },
-})``;
+}))``;
 
 export default observer(CatVoting);

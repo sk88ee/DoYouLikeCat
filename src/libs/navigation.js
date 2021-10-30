@@ -3,7 +3,6 @@ import { Navigation } from 'react-native-navigation';
 const defaultOption = {
   topBar: {
     visible: true,
-    borderColor: '#ffffff',
   },
 };
 

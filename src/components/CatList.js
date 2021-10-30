@@ -1,17 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FlatList, Modal, Alert, Dimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { observer } from 'mobx-react';
 import { useStores } from '@stores/index';
 import { Button } from 'react-native-elements';
 
-const DEVICE_ONE_THIRD_WIDTH = Dimensions.get('window').width / 3;
-
 const CatList = () => {
   const { catStore } = useStores();
   const [modalVisible, setModalVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState();
+  const [deviceOneThirdWidth, setDeviceOneThirdWidth] = useState(
+    Dimensions.get('window').width / 3
+  );
+
+  useEffect(() => {
+    const updateLayout = () => {
+      setDeviceOneThirdWidth(Dimensions.get('window').width / 3);
+    };
+    const subscription = Dimensions.addEventListener('change', updateLayout);
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const showFullScreen = (url) => {
     setImageUrl(url);
@@ -46,8 +57,8 @@ const CatList = () => {
         renderItem={({ item }) => {
           return (
             <GridLayout>
-              <ImageContainer onPress={() => showFullScreen(item)}>
-                <CatIamge source={{ uri: item }}>
+              <ImageContainer onPress={() => showFullScreen(item[1])}>
+                <CatIamge source={{ uri: item[1] }} deviceWidth={deviceOneThirdWidth}>
                   <RemoveButton
                     onPress={() => removeItem(item)}
                     icon={<RemoveIcon source={require('@assets/remove_icon.png')} />}
@@ -72,7 +83,7 @@ const CatList = () => {
   );
 };
 
-const Wrapper = styled(SafeAreaView)``;
+const Wrapper = styled.View``;
 
 const GridLayout = styled.View`
   display: flex;
@@ -81,7 +92,7 @@ const GridLayout = styled.View`
 const ImageContainer = styled.TouchableOpacity``;
 
 const CatIamge = styled.ImageBackground`
-  width: ${DEVICE_ONE_THIRD_WIDTH};
+  width: ${(props) => props.deviceWidth};
   height: 150px;
 `;
 
@@ -93,7 +104,8 @@ const FullScreenImage = styled.Image`
 const RemoveButton = styled(Button).attrs({
   buttonStyle: {
     alignSelf: 'flex-end',
-    width: 40,
+    width: 26,
+    height: 26,
     backgroundColor: '#FFFFFF',
   },
   titleStyle: {

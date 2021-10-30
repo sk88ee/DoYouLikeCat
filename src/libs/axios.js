@@ -1,7 +1,8 @@
 import Axios from 'axios';
+import { Alert } from 'react-native';
 import { THE_CAT_API_URL } from '@env';
 
-const RESPONSE_STATUS_CODE_NO_SESSION = 401;
+const RESPONSE_STATUS_CODE_BAD_REQUEST = 400;
 const RESPONST_STATUS_CODE_INTERNAL = 500;
 
 const defaultAxios = Axios.create({
@@ -15,11 +16,12 @@ const successHandler = (res) => {
 };
 
 const errorHandler = (error) => {
-  const { statusCode } = error?.response?.data?.error;
+  const { statusCode, message } = error?.response?.data?.error;
   let overriden = error;
 
   switch (statusCode) {
-    case RESPONSE_STATUS_CODE_NO_SESSION:
+    case RESPONSE_STATUS_CODE_BAD_REQUEST:
+      Alert.alert('잘못된 요청입니다.', message);
       break;
     case RESPONST_STATUS_CODE_INTERNAL:
       overriden = {
