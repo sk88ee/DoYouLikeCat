@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import styled from 'styled-components/native';
 import { useStores } from '@stores/index';
 import { Button } from 'react-native-elements';
-import { set } from 'mobx';
 
 const CatVoting = ({ componentId }) => {
   const { catStore } = useStores();
@@ -18,10 +17,10 @@ const CatVoting = ({ componentId }) => {
   }, []);
 
   useEffect(() => {
-    const updateLayout = () => {
+    const screenModeChanged = () => {
       setDeviceHalfWidth(Dimensions.get('window').width / 2.5);
     };
-    const subscription = Dimensions.addEventListener('change', updateLayout);
+    const subscription = Dimensions.addEventListener('change', screenModeChanged);
 
     return () => {
       subscription.remove();

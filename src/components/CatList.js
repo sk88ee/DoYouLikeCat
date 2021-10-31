@@ -14,10 +14,10 @@ const CatList = () => {
   );
 
   useEffect(() => {
-    const updateLayout = () => {
+    const screenModeChanged = () => {
       setDeviceOneThirdWidth(Dimensions.get('window').width / 3);
     };
-    const subscription = Dimensions.addEventListener('change', updateLayout);
+    const subscription = Dimensions.addEventListener('change', screenModeChanged);
 
     return () => {
       subscription.remove();

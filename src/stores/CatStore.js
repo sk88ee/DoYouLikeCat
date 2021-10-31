@@ -29,7 +29,6 @@ class CatStore {
         this.bookmarkedList.push([id, url]);
       }
     });
-
     await Storage.setData('SaveList', this.bookmarkedList);
   }
 

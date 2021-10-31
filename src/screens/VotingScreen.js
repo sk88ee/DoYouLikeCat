@@ -20,7 +20,7 @@ const VotingScreen = ({ componentId }) => {
   return (
     <Wrapper>
       <Header>
-        <Title>Do you like cat ?</Title>
+        <Title>Do you like cats ?</Title>
         <BookMarkButton
           onPress={() => showBookmarkList()}
           icon={<BookMarkIcon source={require('@assets/bookmark_icon.png')} />}
@@ -40,6 +40,7 @@ const Wrapper = styled(SafeAreaView)`
 const Header = styled.View`
   flex-direction: row;
   margin-bottom: 30px;
+  background-color: #ffffff;
 `;
 
 const Title = styled.Text`
@@ -48,9 +49,6 @@ const Title = styled.Text`
 `;
 
 const BookMarkButton = styled(Button).attrs({
-  containerStyle: {
-    bottom: 3,
-  },
   buttonStyle: {
     width: 40,
     backgroundColor: '#FFFFFF',
